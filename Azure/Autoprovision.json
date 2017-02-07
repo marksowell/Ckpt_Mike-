@@ -1,0 +1,23 @@
+{
+  "delay": 30,
+  "management": {
+    "name": "R80",
+    "host": "localhost"
+  },
+  "templates": {
+    "my-template": {
+      "one-time-password": "vpn123456",
+      "version": "R77.30",
+      "policy": "Standard"
+    }
+  },
+      "controllers": {
+        "AZURE1": {
+            "class": "Azure",
+            "subscription": "dce0a14e-1a4f-4b9b-9fd3-909d297db861",
+            "credentials": {
+                "tenant": "05b301db-f63d-41d1-af5a-8abb1ae87762",
+                "grant_type": "client_credentials",
+                "client_id": "12019ec6-c55c-498b-ac0a-7462404d4f8a",
+                "client_secret": "GU7EZHLridmVJAdxGfL1I8bWRQBEGjPSmnmZpqKxfhQ="
+            }

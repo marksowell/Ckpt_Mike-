@@ -1,0 +1,155 @@
+﻿<#
+Purpose: Provision Checkpoint Appliances in Azure Service Manager (ASM)
+Author: Mentat --> https://www.mentatadvisors.com
+Date: 20161215
+Version: 0.1
+
+NOTES:
+20161215 - Static IP address setting failed to set even after checking open IPs with Test-AzureStaticVNetIP
+20161215 - d525fd1a1ede42a8abb26b1f8d182845__checkpointvsecbyol is the only image that successfully provisioned
+20161215 - The Azure Linux Agent had 130 errors found in the boot logs, consequently there is limited functionality in the Azure portal
+
+#>
+
+####Set VARS###
+ $VMcsv = Import-Csv "D:\clients\cdt\checkpoint\checkpoint_vm_template.csv";
+ $azsub="US Government Azure Enterprise Offer"
+ $displayDebug = 1; #1 Display 0 hide
+ $infoColor = 'Green'; #0
+ $debugColor = 'Yellow'; #2
+ $displayColor = 'Cyan'; #1
+ $errorColor = 'Red'; #3
+<#
+Screen colors
+Black
+Blue
+Cyan
+DarkBlue
+DarkCyan
+DarkGray
+DarkGreen
+DarkMagenta
+DarkRed
+DarkYellow
+Gray
+Green
+Magenta
+Red
+White
+Yellow
+#>
+
+#Function to display message
+Function displayInfo ($message,$messStatus){
+  if($displayDebug -eq 1){
+    switch ($messStatus)
+    {
+      0 { $displColor = 'Green' }
+      1 { $displColor = 'Cyan' }
+      2 { $displColor = 'Yellow' }
+      3 { $displColor = 'Red' }
+      Default { $displColor = 'Green'}
+    }
+      write-Host $message -ForegroundColor $displColor;
+    }
+  }
+
+#Start log file
+#Log message
+$message = "[INFO] - $start_time VM Provisioning";
+$messStatus = 0;
+displayInfo $message $messStatus;
+
+
+#Main Loop
+foreach($vm in $VMcsv){
+    $message = "[INFO] - $start_time`nVM=>$($vm.VMPrefix)`nSize=>$($vm.Instancesize)`nAdmin=>$($vm.AdminLogin)`nAdminPW=>$($vm.AdminPassword)`nIPAddress=>$($vm.IPAddress)`nNic0=>$($vm.Subnet0)`nNic0=>$($vm.Subnet1)`nNic0=>$($vm.Subnet2)`n`nNic0=>$($vm.Subnet3)`nNic0=>$($vm.SubnetName)";
+    $messStatus = 0;
+    displayInfo $message $messStatus
+
+    #Start Provisioning Script
+    ############################
+    ####Create Service###
+    New-AzureService -ServiceName $vm.CloudService -Location $vm.Location
+
+    ####VM Provisioning Configuration with Linux Credential Set###
+    Set-AzureSubscription -SubscriptionName $azsub -CurrentStorageAccountName $vm.StorageAccount
+
+    $vm2=New-AzureVMConfig -Name $vm.VMPrefix -InstanceSize $vm.InstanceSize -ImageName $vm.Image -AvailabilitySetName $vm.AvailabilitySet
+
+    if ($vm.OSFamily.Contains('Linux')){
+        Add-AzureProvisioningConfig -Linux -VM $vm2 -LinuxUser $vm.AdminLogin -Password $vm.AdminPassword
+        $message = "OS Family $($vm.OSFamily)";
+        $messStatus = 1;
+        displayInfo $message $messStatus;
+
+    } <#elseif ($vm.OSFamily.Contains('Windows')){
+        #Add-AzureProvisioningConfig -Windows -VM $vm -AdminUsername $vm.AdminLogin -Password $vm.AdminPassword
+        $message = "OS Family $($vm.OSFamily)";
+        $messStatus = 1;
+        displayInfo $message $messStatus;
+    }#>
+
+    ####VM Provisioning Configuration NICS###
+    #NIC0
+    if($vm.Nic0.Length -gt 0) {
+        Add-AzureNetworkInterfaceConfig -Name $vm.Nic0 -SubnetName $vm.Subnet0 -VM $vm2
+        $message = "Adding NIC 0 $($vm.Nic0) to subnet $($vm.Subnet0)";
+        $messStatus = 0;
+        displayInfo $message $messStatus;
+
+    } else {
+        $message = "NIC 0 is empty";
+        $messStatus = 1;
+        displayInfo $message $messStatus;
+    }
+    #NIC1
+    if($vm.Nic1.Length -gt 0) {
+        Add-AzureNetworkInterfaceConfig -Name $vm.Nic1 -SubnetName $vm.Subnet1 -VM $vm2
+        $message = "Adding NIC 1 $($vm.Nic1) to subnet $($vm.Subnet1)";
+        $messStatus = 0;
+        displayInfo $message $messStatus;
+    } else {
+        $message = "NIC 1 is empty";
+        $messStatus = 1;
+        displayInfo $message $messStatus;
+    }
+    #NIC2
+    if($vm.Nic2.Length -gt 0) {
+        Add-AzureNetworkInterfaceConfig -Name $vm.Nic2 -SubnetName $vm.Subnet2 -VM $vm2
+        $message = "Adding NIC 2 $($vm.Nic2) to subnet $($vm.Subnet2)";
+        $messStatus = 0;
+        displayInfo $message $messStatus;
+    } else {
+        $message = "NIC 2 is empty";
+        $messStatus = 1;
+        displayInfo $message $messStatus;
+    }
+    #NIC3
+    if($vm.Nic3.Length -gt 0) {
+        Add-AzureNetworkInterfaceConfig -Name $vm.Nic3 -SubnetName $vm.Subnet3 -VM $vm2
+        $message = "Adding NIC 3 $($vm.Nic3) to subnet $($vm.Subnet3)";
+        $messStatus = 0;
+        displayInfo $message $messStatus;
+    } else {
+        $message = "NIC 3 is empty";
+        $messStatus = 2;
+        displayInfo $message $messStatus;
+    }
+
+    ####Set the Subnet of the Primary NIC ETH0 - NOTE the set static IP is commented out because there were issues with provisioning. Static addresses were checked with Test-AzureStaticVNetIP prior to running and errors continued###
+    Set-AzureSubnet -SubnetNames $vm.SubnetName -VM $vm2
+    #Set-AzureStaticVNetIP -IPAddress $vm.IPAddress -VM $vm
+    $message = "Subnet Name to $($vm.SubnetName) VM=>$vm";
+    $messStatus = 0;
+    displayInfo $message $messStatus;
+
+
+    ####Create VM###
+    New-AzureVM -ServiceName $vm.CloudService –VNetName $vm.VNetName –VMs $vm2
+    $message = "Provisioning VNet $($vm.VNetName) on VM=>$vm, CS=>$cs with VNET=>$($vm.VNetName)";
+    $messStatus = 0;
+    displayInfo $message $messStatus;
+
+    #################################
+}

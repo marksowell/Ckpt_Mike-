@@ -1,0 +1,418 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineScaleSets_AutoscaleSet_adminPassword": {
+            "defaultValue": null,
+            "type": "SecureString"
+        },
+        "virtualMachineScaleSets_AutoscaleSet_name": {
+            "defaultValue": "AutoscaleSet",
+            "type": "String"
+        },
+        "autoscalesettings_AutoscaleSet_name": {
+            "defaultValue": "AutoscaleSet",
+            "type": "String"
+        },
+        "loadBalancers_AutoscaleSet_lb_name": {
+            "defaultValue": "AutoscaleSet-lb",
+            "type": "String"
+        },
+        "publicIPAddresses_AutoscaleSet_ip_name": {
+            "defaultValue": "AutoscaleSet-ip",
+            "type": "String"
+        },
+        "storageAccounts_aautoscaleset4d4egnz7icb_name": {
+            "defaultValue": "aautoscaleset4d4egnz7icb",
+            "type": "String"
+        },
+        "storageAccounts_gautoscaleset4d4egnz7icb_name": {
+            "defaultValue": "gautoscaleset4d4egnz7icb",
+            "type": "String"
+        },
+        "storageAccounts_mautoscaleset4d4egnz7icb_name": {
+            "defaultValue": "mautoscaleset4d4egnz7icb",
+            "type": "String"
+        },
+        "storageAccounts_sautoscaleset4d4egnz7icb_name": {
+            "defaultValue": "sautoscaleset4d4egnz7icb",
+            "type": "String"
+        },
+        "storageAccounts_yautoscaleset4d4egnz7icb_name": {
+            "defaultValue": "yautoscaleset4d4egnz7icb",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_AutoscaleSet_id": {
+            "defaultValue": "/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/R80-RG/providers/Microsoft.Network/virtualNetworks/R80-RG/subnets/Management",
+            "type": "String"
+        },
+        "loadBalancers_AutoscaleSet_lb_id": {
+            "defaultValue": "/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/Autoscale-RG/providers/Microsoft.Network/loadBalancers/AutoscaleSet-lb/frontendIPConfigurations/loadBalancerFrontEnd",
+            "type": "String"
+        },
+        "loadBalancers_AutoscaleSet_lb_id_1": {
+            "defaultValue": "/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/Autoscale-RG/providers/Microsoft.Network/loadBalancers/AutoscaleSet-lb/backendAddressPools/loadBalancerBEAddressPool",
+            "type": "String"
+        },
+        "loadBalancers_AutoscaleSet_lb_id_2": {
+            "defaultValue": "/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/Autoscale-RG/providers/Microsoft.Network/loadBalancers/AutoscaleSet-lb/probes/loadBalancerWebProbe",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/Autoscale-RG/providers/Microsoft.Compute/virtualMachineScaleSets/AutoscaleSet'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_D2_v2",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "name": "[parameters('virtualMachineScaleSets_AutoscaleSet_name')]",
+            "apiVersion": "2015-06-15",
+            "location": "eastus",
+            "plan": {
+                "name": "sg-byol",
+                "product": "check-point-r77-10",
+                "publisher": "checkpoint"
+            },
+            "tags": {
+                "x-chkp-management": "R80",
+                "x-chkp-template": "Standard",
+                "x-chkp-ip-address": "private",
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[concat(parameters('virtualMachineScaleSets_AutoscaleSet_name'),'autoscaleset', parameters('virtualMachineScaleSets_AutoscaleSet_name'))]",
+                        "adminUsername": "notused",
+                        "customData": "IyEvYmluL2Jhc2gKCnNpY0tleT0idnBuMTIzNDU2IgoKY29uZj0iaW5zdGFsbF9zZWN1cml0eV9ndz10cnVlIgpjb25mPSIke2NvbmZ9Jmluc3RhbGxfcHBhaz10cnVlIgpjb25mPSIke2NvbmZ9JmdhdGV3YXlfY2x1c3Rlcl9tZW1iZXI9ZmFsc2UiCmNvbmY9IiR7Y29uZn0maW5zdGFsbF9zZWN1cml0eV9tYW5hZ21lbnQ9ZmFsc2UiCmNvbmY9IiR7Y29uZn0mZnR3X3NpY19rZXk9JHNpY0tleSIKCmNvbmZpZ19zeXN0ZW0gLXMgIiRjb25mIgoKYWRkcj0iJChpcCBhZGRyIHNob3cgZGV2IGV0aDAgfCBhd2sgIi9pbmV0L3twcmludCBcJDI7IGV4aXR9IiB8IGN1dCAtZCAvIC1mIDEpIgoKZHluYW1pY19vYmplY3RzIC1uIExvY2FsR2F0ZXdheSAtciAiJGFkZHIiICIkYWRkciIgLWEKCnNodXRkb3duIC1yIG5vdwoK",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": false
+                        },
+                        "secrets": [],
+                        "adminPassword": "[parameters('virtualMachineScaleSets_AutoscaleSet_adminPassword')]"
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "vhdContainers": [
+                                "https://aautoscaleset4d4egnz7icb.blob.core.windows.net/vmss",
+                                "https://gautoscaleset4d4egnz7icb.blob.core.windows.net/vmss",
+                                "https://mautoscaleset4d4egnz7icb.blob.core.windows.net/vmss",
+                                "https://sautoscaleset4d4egnz7icb.blob.core.windows.net/vmss",
+                                "https://yautoscaleset4d4egnz7icb.blob.core.windows.net/vmss"
+                            ],
+                            "name": "vmssosdisk",
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite"
+                        },
+                        "imageReference": {
+                            "publisher": "checkpoint",
+                            "offer": "check-point-r77-10",
+                            "sku": "sg-byol",
+                            "version": "latest"
+                        }
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "eth0",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "ipconfig1",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[parameters('virtualMachineScaleSets_AutoscaleSet_id')]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_AutoscaleSet_lb_name')), '/backendAddressPools/loadBalancerBEAddressPool')]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "properties": {
+                                    "publisher": "Microsoft.OSTCExtensions",
+                                    "type": "LinuxDiagnostic",
+                                    "typeHandlerVersion": "2.3",
+                                    "autoUpgradeMinorVersion": true,
+                                    "settings": {
+                                        "xmlCfg": "PD94bWwgdmVyc2lvbj0nMS4wJz8+PFdhZENmZz48RGlhZ25vc3RpY01vbml0b3JDb25maWd1cmF0aW9uIG92ZXJhbGxRdW90YUluTUI9JzQwOTYnPjxEaWFnbm9zdGljSW5mcmFzdHJ1Y3R1cmVMb2dzIHNjaGVkdWxlZFRyYW5zZmVyUGVyaW9kPSdQVDFNJyBzY2hlZHVsZWRUcmFuc2ZlckxvZ0xldmVsRmlsdGVyPSdXYXJuaW5nJy8+PFBlcmZvcm1hbmNlQ291bnRlcnMgc2NoZWR1bGVkVHJhbnNmZXJQZXJpb2Q9J1BUMU0nPjwvUGVyZm9ybWFuY2VDb3VudGVycz48TWV0cmljcyByZXNvdXJjZUlkPScvc3Vic2NyaXB0aW9ucy9kY2UwYTE0ZS0xYTRmLTRiOWItOWZkMy05MDlkMjk3ZGI4NjEvcmVzb3VyY2VHcm91cHMvQXV0b3NjYWxlLVJHL3Byb3ZpZGVycy9NaWNyb3NvZnQuQ29tcHV0ZS92aXJ0dWFsTWFjaGluZVNjYWxlU2V0cy9BdXRvc2NhbGVTZXQnPjxNZXRyaWNBZ2dyZWdhdGlvbiBzY2hlZHVsZWRUcmFuc2ZlclBlcmlvZD0nUFQxSCcvPjxNZXRyaWNBZ2dyZWdhdGlvbiBzY2hlZHVsZWRUcmFuc2ZlclBlcmlvZD0nUFQxTScvPjwvTWV0cmljcz48L0RpYWdub3N0aWNNb25pdG9yQ29uZmlndXJhdGlvbj48L1dhZENmZz4=",
+                                        "storageAccount": "[concat('aautoscaleset4d4egnz7icb')]"
+                                    }
+                                },
+                                "name": "LinuxDiagnostic"
+                            }
+                        ]
+                    }
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_AutoscaleSet_lb_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/Autoscale-RG/providers/microsoft.insights/autoscalesettings/AutoscaleSet'.",
+            "type": "microsoft.insights/autoscalesettings",
+            "name": "[parameters('autoscalesettings_AutoscaleSet_name')]",
+            "apiVersion": "2014-04-01",
+            "location": "eastus",
+            "tags": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {
+                "profiles": [
+                    {
+                        "name": "Profile1",
+                        "capacity": {
+                            "minimum": "2",
+                            "maximum": "10",
+                            "default": "2"
+                        },
+                        "rules": [
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_AutoscaleSet_name'))]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "GreaterThan",
+                                    "threshold": 80
+                                },
+                                "scaleAction": {
+                                    "direction": "Increase",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT5M"
+                                }
+                            },
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_AutoscaleSet_name'))]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "LessThan",
+                                    "threshold": 60
+                                },
+                                "scaleAction": {
+                                    "direction": "Decrease",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT5M"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "enabled": true,
+                "name": "[parameters('autoscalesettings_AutoscaleSet_name')]",
+                "targetResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_AutoscaleSet_name'))]"
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_AutoscaleSet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/Autoscale-RG/providers/Microsoft.Network/loadBalancers/AutoscaleSet-lb'.",
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[parameters('loadBalancers_AutoscaleSet_lb_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus",
+            "tags": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "loadBalancerFrontEnd",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_AutoscaleSet_ip_name'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "loadBalancerBEAddressPool"
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "weblb",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_AutoscaleSet_lb_id')]"
+                            },
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[parameters('loadBalancers_AutoscaleSet_lb_id_1')]"
+                            },
+                            "probe": {
+                                "id": "[parameters('loadBalancers_AutoscaleSet_lb_id_2')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "loadBalancerWebProbe",
+                        "properties": {
+                            "protocol": "Http",
+                            "port": 80,
+                            "requestPath": "/iisstart.htm",
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 5
+                        }
+                    }
+                ],
+                "inboundNatRules": [],
+                "outboundNatRules": [],
+                "inboundNatPools": []
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_AutoscaleSet_ip_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/Autoscale-RG/providers/Microsoft.Network/publicIPAddresses/AutoscaleSet-ip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_AutoscaleSet_ip_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus",
+            "tags": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "autoscaleset-4d4egnz7icbqy"
+                }
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/autoscale-rg/providers/Microsoft.Storage/storageAccounts/aautoscaleset4d4egnz7icb'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_aautoscaleset4d4egnz7icb_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "eastus",
+            "tags": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {},
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/autoscale-rg/providers/Microsoft.Storage/storageAccounts/gautoscaleset4d4egnz7icb'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_gautoscaleset4d4egnz7icb_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "eastus",
+            "tags": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {},
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/autoscale-rg/providers/Microsoft.Storage/storageAccounts/mautoscaleset4d4egnz7icb'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_mautoscaleset4d4egnz7icb_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "eastus",
+            "tags": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {},
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/autoscale-rg/providers/Microsoft.Storage/storageAccounts/sautoscaleset4d4egnz7icb'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_sautoscaleset4d4egnz7icb_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "eastus",
+            "tags": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {},
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/dce0a14e-1a4f-4b9b-9fd3-909d297db861/resourceGroups/autoscale-rg/providers/Microsoft.Storage/storageAccounts/yautoscaleset4d4egnz7icb'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_yautoscaleset4d4egnz7icb_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "eastus",
+            "tags": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "properties": {},
+            "resources": [],
+            "dependsOn": []
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineScaleSets_AutoscaleSet_adminPassword": {
+            "value": null
+        },
+        "virtualMachineScaleSets_AutoscaleSet_name": {
+            "value": null
+        },
+        "autoscalesettings_AutoscaleSet_name": {
+            "value": null
+        },
+        "loadBalancers_AutoscaleSet_lb_name": {
+            "value": null
+        },
+        "publicIPAddresses_AutoscaleSet_ip_name": {
+            "value": null
+        },
+        "storageAccounts_aautoscaleset4d4egnz7icb_name": {
+            "value": null
+        },
+        "storageAccounts_gautoscaleset4d4egnz7icb_name": {
+            "value": null
+        },
+        "storageAccounts_mautoscaleset4d4egnz7icb_name": {
+            "value": null
+        },
+        "storageAccounts_sautoscaleset4d4egnz7icb_name": {
+            "value": null
+        },
+        "storageAccounts_yautoscaleset4d4egnz7icb_name": {
+            "value": null
+        },
+        "virtualMachineScaleSets_AutoscaleSet_id": {
+            "value": null
+        },
+        "loadBalancers_AutoscaleSet_lb_id": {
+            "value": null
+        },
+        "loadBalancers_AutoscaleSet_lb_id_1": {
+            "value": null
+        },
+        "loadBalancers_AutoscaleSet_lb_id_2": {
+            "value": null
+        }
+    }
+}

@@ -1,0 +1,392 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "String",
+            "metadata": {
+                "description": "Deployment location"
+            }
+        },
+        "adminPassword": {
+            "defaultValue": "",
+            "type": "SecureString",
+            "metadata": {
+                "description": "Administrator password"
+            }
+        },
+        "authenticationType": {
+            "defaultValue": "password",
+            "allowedValues": [
+                "password",
+                "sshPublicKey"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Authentication type"
+            }
+        },
+        "storageAccountName": {
+            "type": "String",
+            "metadata": {
+                "description": "Name of storage account"
+            }
+        },
+        "storageAccountNewOrExisting": {
+            "defaultValue": "new",
+            "allowedValues": [
+                "new",
+                "existing"
+            ],
+            "type": "String",
+            "metadata": {
+                "Description": "Indicates whether the Storage Account is new or existing"
+            }
+        },
+        "storageAccountType": {
+            "defaultValue": "Standard_LRS",
+            "type": "String",
+            "metadata": {
+                "description": "The type of the Storage Account created"
+            }
+        },
+        "existingStorageAccountRG": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "Resource Group of the existing storage account"
+            }
+        },
+        "sshPublicKey": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "Administrator SSH public key"
+            }
+        },
+        "vmName": {
+            "type": "String",
+			"defaultValue": "S00002CPMS00001",
+            "metadata": {
+                "description": "Name of the Check Point Security Gateway"
+            }
+        },
+        "vmSize": {
+            "defaultValue": "Standard_D3",
+            "type": "String",
+            "metadata": {
+                "description": "Size of the VM"
+            }
+        },
+        "sicKey": {
+            "defaultValue": "vpn123456",
+            "type": "SecureString",
+            "metadata": {
+                "description": "One time key for Secure Internal Communication"
+            }
+        },
+        "virtualNetworkName": {
+            "defaultValue": "S00001NVNTSHD-10.18.54.0_24",
+            "type": "String",
+            "metadata": {
+                "description": "The name of the virtual network"
+            }
+        },
+        "virtualNetworkAddressPrefix": {
+            "defaultValue": "10.18.54.0/24",
+            "type": "String",
+            "metadata": {
+                "description": "The address prefix of the virtual network"
+            }
+        },
+        "Subnet1Name": {
+            "defaultValue": "S00001NSUBMGT-10.18.54.96_27",
+            "type": "String",
+            "metadata": {
+                "description": "The name of the 1st subnet"
+            }
+        },
+        "Subnet1Prefix": {
+            "defaultValue": "10.18.54.96/27",
+            "type": "String",
+            "metadata": {
+                "description": "The address prefix of the 1st subnet"
+            }
+        },
+        "Subnet1StartAddress": {
+            "defaultValue": "10.18.54.100",
+            "type": "String",
+            "metadata": {
+                "description": "The first avaialable address on the 1st subnet"
+            }
+        },
+        "vnetNewOrExisting": {
+            "defaultValue": "existing",
+            "allowedValues": [
+                "new",
+                "existing"
+            ],
+            "type": "String",
+            "metadata": {
+                "Description": "Indicates whether the virtual network is new or existing"
+            }
+        },
+        "virtualNetworkExistingRGName": {
+            "defaultValue": "S00001RGPNetworkingEast",
+            "type": "String",
+            "metadata": {
+                "description": "Resource Group of the existing virtual network"
+            }
+        },
+        "managementGUIClientNetwork": {
+            "defaultValue": "0.0.0.0/0",
+            "type": "String",
+            "metadata": {
+                "description": "Allowed GUI clients"
+            }
+        },
+        "installationType": {
+            "defaultValue": "management",
+            "allowedValues": [
+                "standalone",
+                "gateway",
+                "management"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Installation Type"
+            }
+        },
+        "baseUrl": {
+            "defaultValue": "https://gallery.azure.com/artifact/20151001/checkpoint.vsec2management-byol.1.0.8/Artifacts",
+            "type": "String",
+            "metadata": {
+                "artifactsBaseUrl": ""
+            }
+        },
+        "Check_PointTags": {
+            "defaultValue": {
+                "provider": "30DE18BC-F9F6-4F22-9D30-54B8E74CFD5F"
+            },
+            "type": "Object"
+        }
+    },
+    "variables": {
+        "computeApiVersion": "2016-03-30",
+        "storageApiVersion": "2016-01-01",
+        "networkApiVersion": "2016-06-01",
+        "deploymentsApiVersion": "2016-02-01",
+        "storageAccountNameexisting": "[parameters('storageAccountName')]",
+        "storageAccountNamenew": "[trim(substring(concat(parameters('storageAccountName'), uniqueString(resourceGroup().id, deployment().name), '                        '), 0, 24))]",
+        "storageAccountName": "[variables(concat('storageAccountName', parameters('storageAccountNewOrExisting')))]",
+        "storageAccountUri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net')]",
+        "storageAccountSetupURL": "[concat(parameters('baseUrl'),'/storageAccount-', parameters('storageAccountNewOrExisting'), '.json')]",
+        "networkSetupURL": "[concat(parameters('baseUrl'),'/vnet-1-subnet-', parameters('vnetNewOrExisting'), '.json')]",
+        "customData": "[concat('#!/bin/bash\n', '\n', 'installationType=\"', parameters('installationType'), '\"', '\n', '\n', 'case \"$installationType\" in\n', 'gateway)\n', '\tinstallSecurityGateway=true\n', '\tinstallSecurityManagement=false\n', '\tsicKey=\"', parameters('sicKey'), '\"', '\n', '\t;;\n', 'management)\n', '\tinstallSecurityGateway=false\n', '\tinstallSecurityManagement=true\n', '\tsicKey=notused\n', '\t;;\n', 'standalone | *)\n', '\tinstallSecurityGateway=true\n', '\tinstallSecurityManagement=true\n', '\tsicKey=notused\n', '\t;;\n', 'esac\n', '\n', 'conf=\"install_security_gw=$installSecurityGateway\"\n', 'if $installSecurityGateway; then\n', '    conf=\"${conf}&install_ppak=true\"\n', '    conf=\"${conf}&gateway_cluster_member=false\"\n', 'fi\n', 'conf=\"${conf}&install_security_managment=$installSecurityManagement\"\n', 'if $installSecurityManagement; then\n', '\n', '\tmanagementGUIClientNetwork=\"', parameters('managementGUIClientNetwork'), '\"', '\n', '\tManagementGUIClientBase=\"$(echo $managementGUIClientNetwork | cut -d / -f 1)\"\n', '\tManagementGUIClientMaskLength=\"$(echo $managementGUIClientNetwork | cut -d / -f 2)\"\n', '\n', '    conf=\"${conf}&install_mgmt_primary=true\"\n', '\tconf=\"${conf}&mgmt_admin_radio=gaia_admin\"\n', '    conf=\"${conf}&mgmt_gui_clients_radio=network\"\n', '    conf=\"${conf}&mgmt_gui_clients_ip_field=$ManagementGUIClientBase\"\n', '    conf=\"${conf}&mgmt_gui_clients_subnet_field=$ManagementGUIClientMaskLength\"\n', 'fi\n', 'conf=\"${conf}&ftw_sic_key=$sicKey\"\n', '\n', 'config_system -s \"$conf\"\n', '\n', 'if $installSecurityGateway; then\n', '\tshutdown -r now\n', 'fi\n')]",
+        "imageOffer": "sg2",
+        "imagePublisher": "checkpoint",
+        "imageReference": {
+            "offer": "[variables('imageOffer')]",
+            "publisher": "[variables('imagePublisher')]",
+            "sku": "sg-byol2",
+            "version": "latest"
+        },
+        "nic1Name": "eth0",
+        "linuxConfigurationpassword": {},
+        "linuxConfigurationsshPublicKey": {
+            "disablePasswordAuthentication": "true",
+            "ssh": {
+                "publicKeys": [
+                    {
+                        "keyData": "[parameters('sshPublicKey')]",
+                        "path": "/home/notused/.ssh/authorized_keys"
+                    }
+                ]
+            }
+        },
+        "linuxConfiguration": "[variables(concat('linuxConfiguration',parameters('authenticationType')))]",
+        "plan": {
+            "name": "sg-byol2",
+            "product": "[variables('imageOffer')]",
+            "publisher": "[variables('imagePublisher')]"
+        },
+        "publicIPAddressName": "[parameters('vmName')]",
+        "publicIPAddressId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "storageAccountSetup",
+            "apiVersion": "[variables('deploymentsApiVersion')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('storageAccountSetupURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "storageAccountType": {
+                        "value": "[parameters('storageAccountType')]"
+                    },
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "apiVersion": {
+                        "value": "[variables('storageApiVersion')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "networkSetup",
+            "apiVersion": "[variables('deploymentsApiVersion')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('networkSetupURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "apiVersion": {
+                        "value": "[variables('networkApiVersion')]"
+                    },
+                    "virtualNetworkName": {
+                        "value": "[parameters('virtualNetworkName')]"
+                    },
+                    "virtualNetworkAddressPrefix": {
+                        "value": "[parameters('virtualNetworkAddressPrefix')]"
+                    },
+                    "Subnet1Name": {
+                        "value": "[parameters('Subnet1Name')]"
+                    },
+                    "Subnet1Prefix": {
+                        "value": "[parameters('Subnet1Prefix')]"
+                    },
+                    "vnetNewOrExisting": {
+                        "value": "[parameters('vnetNewOrExisting')]"
+                    },
+                    "virtualNetworkExistingRGName": {
+                        "value": "[parameters('virtualNetworkExistingRGName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressName')]",
+            "apiVersion": "[variables('networkApiVersion')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "provider": "[toUpper(parameters('Check_PointTags').provider)]"
+            },
+            "properties": {
+                "idleTimeoutInMinutes": 30,
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(toLower(parameters('vmName')), '-', uniquestring(resourceGroup().id, deployment().name))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nic1Name')]",
+            "apiVersion": "[variables('networkApiVersion')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "provider": "[toUpper(parameters('Check_PointTags').provider)]"
+            },
+            "properties": {
+                "enableIPForwarding": false,
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "[parameters('Subnet1StartAddress')]",
+                            "privateIPAllocationMethod": "Static",
+                            "PublicIpAddress": {
+                                "Id": "[variables('publicIPAddressId')]"
+                            },
+                            "subnet": {
+                                "id": "[concat(reference('networkSetup').outputs.vnetId.value, '/subnets/', parameters('subnet1Name'))]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'networkSetup')]",
+                "[variables('publicIPAddressId')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vmName')]",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "location": "[parameters('location')]",
+            "plan": "[variables('plan')]",
+            "tags": {
+                "provider": "[toUpper(parameters('Check_PointTags').provider)]"
+            },
+            "properties": {
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[variables('storageAccountUri')]"
+                    }
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic1Name'))]",
+                            "properties": {
+                                "primary": true
+                            }
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "adminUsername": "notused",
+                    "computername": "[toLower(parameters('vmName'))]",
+                    "customData": "[base64(variables('customData'))]",
+                    "linuxConfiguration": "[variables('linuxConfiguration')]"
+                },
+                "storageProfile": {
+                    "imageReference": "[variables('imageReference')]",
+                    "osDisk": {
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "name": "osDisk",
+                        "vhd": {
+                            "uri": "[concat(variables('storageAccountUri'), '/', toLower(parameters('vmName')), '-', uniqueString(resourceGroup().id, deployment().name), '/osDisk.vhd')]"
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "storageAccountSetup",
+                "[variables('nic1Name')]"
+            ]
+        }
+    ],
+    "outputs": {
+        "IPAddress": {
+            "type": "String",
+            "value": "[reference(variables('publicIPAddressId')).IpAddress]"
+        },
+        "FQDN": {
+            "type": "String",
+            "value": "[reference(variables('publicIPAddressId')).dnsSettings.fqdn]"
+        }
+    }
+}
