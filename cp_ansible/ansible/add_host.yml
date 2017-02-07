@@ -1,0 +1,21 @@
+---
+- hosts: "localhost"
+  vars:
+   host_name: "demohost2"
+   ip_address: "1.1.1.1"
+  tasks:
+  - include: mgmt_login.yml
+    when: login_response is undefined
+
+  - name: "add host"
+    check_point_mgmt:
+        command: add-host
+        parameters:
+            name: "{{ host_name }}"
+            ip-address: "{{ ip_address }}"
+        session-data: "{{ login_response }}"
+
+  - name: publish
+    check_point_mgmt:
+      command: publish
+      session-data: "{{login_response}}"

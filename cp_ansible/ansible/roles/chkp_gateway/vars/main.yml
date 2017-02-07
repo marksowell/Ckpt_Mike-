@@ -1,0 +1,6 @@
+---
+sic_key: vpn123
+ntpprimay: time-a.nist.gov
+ntpbackup: time-b.nist.gov
+dnsprimary: 8.8.8.8
+dnssecondary: 8.8.4.4

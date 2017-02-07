@@ -1,0 +1,15 @@
+---
+
+- name: set dns
+  raw: clish -c "set dns primary {{ dnsprimary }}"
+
+- name: download python
+  raw: . /etc/profile && /opt/CPsuite-R77/fw1/bin/curl_cli -O http://dl.fedoraproject.org/pub/epel/5/i386/python26-2.6.8-2.el5.i386.rpm
+- name: download libffi
+  raw: . /etc/profile && curl_cli -O http://dl.fedoraproject.org/pub/epel/5/i386/libffi-3.0.5-1.el5.i386.rpm
+- name: download python-libs
+  raw: . /etc/profile && curl_cli -O http://dl.fedoraproject.org/pub/epel/5/i386/python26-libs-2.6.8-2.el5.i386.rpm
+- name: install packages
+  raw: rpm -Uvh python26-2.6.8-2.el5.i386.rpm libffi-3.0.5-1.el5.i386.rpm python26-libs-2.6.8-2.el5.i386.rpm
+- name: link python
+  raw: ln -s /usr/bin/python2.6 /usr/bin/python

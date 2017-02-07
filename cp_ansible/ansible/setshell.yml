@@ -1,0 +1,29 @@
+---
+# Setshell must be run separately from other plays due to ansible using a
+# control connection for ssh sessions.  You can globally set ssh_args = ''
+# in your ansible.cfg file to bypass this restriction.
+- hosts: gateways
+  vars:
+    ansible_shell_executable: ''
+  #Disable gather facts.
+  #python is not installed on check point gateways by default
+  #Gather facts will cause the play to fail until python is installed
+  accelerate: false
+  gather_facts: False
+  tasks:
+  - name: lock db
+    raw: lock database override
+    ignore_errors: true
+
+  - name: set shell
+    raw: set user admin shell /bin/bash
+  - name: save and exit
+    raw: clish -c "save config"
+
+  - name: enable sftp
+    raw: sed -ir '/#Subsystem/s/^#//' /etc/ssh/sshd_config
+
+  - name: restart sshd
+    #cannot user service.  python not installed
+    #service: name=sshd state=restarted
+    raw: service sshd restart

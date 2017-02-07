@@ -1,0 +1,9 @@
+[localhost]
+localhost
+[mgmt]
+192.168.10.15
+[gateways]
+192.168.10.16 hostname=cpgw1 
+[gateways:vars]
+ansible_shell_executable=
+ansible_ssh_pass=vpn123

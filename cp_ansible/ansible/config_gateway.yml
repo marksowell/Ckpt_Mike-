@@ -1,0 +1,9 @@
+---
+- hosts: gateways
+  # vars:
+  #   ansible_shell_executable: ''
+  #Disable gather facts.  python is not installed on check point gateways by default
+  # accelerate: false
+  gather_facts: False
+  roles:
+    - chkp_gateway

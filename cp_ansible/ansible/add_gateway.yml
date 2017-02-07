@@ -1,0 +1,55 @@
+---
+- hosts: localhost
+  vars:
+    #Login information for the Check Point Management server
+    mgmt_server: 192.168.10.15
+    mgmt_user: admin
+    mgmt_password: vpn123
+    #Gateway configuration information
+    hostname: cpgw1
+    sic_key: vpn123
+    mainip: 192.168.10.16
+    interfaces:
+      - name: "eth0"
+        ip-address: "192.168.10.16"
+        network-mask: "255.255.255.0"
+        anti-spoofing: "true"
+        topology: "automatic"
+      - name: "eth1"
+        ip-address: "192.168.8.16"
+        network-mask: "255.255.255.0"
+        anti-spoofing: "true"
+        topology: "automatic"
+
+  tasks:
+  - name: "login"
+    check_point_mgmt:
+      command: login
+      parameters:
+        username: "{{mgmt_user}}"
+        password: "{{mgmt_password}}"
+        management: "{{mgmt_server}}"
+      fingerprint: "A6:51:9D:39:CF:9E:66:F4:17:25:C0:35:74:15:CE:5D:F4:DA:E8:CE"
+    register: login_response
+    # The "when" conditional is added incase multiple plays with Check Point Mgmt
+    # are run consecutively
+    when: login_response is undefined
+
+  - name: "add simple-gateway"
+    check_point_mgmt:
+      command: add-simple-gateway
+      session-data: "{{ login_response }}"
+      parameters:
+        name: "{{hostname}}"
+        ip-address: "{{ mainip }}"
+        firewall: "true"
+        vpn: "false"
+        ips: "true"
+        one-time-password: "{{sic_key}}"
+        interfaces: "{{ interfaces }}"
+
+  # This could also be defined as a handler.  As it will be used frequently
+  - name: publish
+    check_point_mgmt:
+      command: publish
+      session-data: "{{login_response}}"

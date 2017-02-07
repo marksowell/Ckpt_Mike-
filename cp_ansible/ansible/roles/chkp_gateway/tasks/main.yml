@@ -1,0 +1,4 @@
+---
+
+- include: install_python.yml
+- include: first_time_wizard.yml

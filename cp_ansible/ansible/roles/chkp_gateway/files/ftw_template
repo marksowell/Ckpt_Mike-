@@ -1,0 +1,31 @@
+# Mandatory parameters - change the values specific to your setup
+hostname={{ hostname }}
+ftw_sic_key={{ sic_key }}
+
+# Mandatory parameters - do not change
+install_security_managment="false"
+install_security_gw="true"
+gateway_daip="false"
+install_ppak="true"
+gateway_cluster_member="false"
+
+# Optional parameters - recommended - sk94508 + sk94509
+download_info="true"
+upload_info="true"
+
+# Optional parameters - uncomment the required field and fill the value
+# Domain name
+# domainname=
+
+# DNS
+primary={{ dnsprimary }}
+secondary={{ dnssecondary }}
+# tertiary=
+
+# Time zone
+# timezone='America/New_York'
+ntp_primary={{ ntpprimay }}
+ntp_secondary={{ ntpbackup }}
+
+# Hash of the password of user 'admin' used for access to CLI and WebUI
+# admin_hash=''

@@ -1,0 +1,29 @@
+- name: launch autoscale gateway
+  cloudformation:
+    stack_name: "auto-scaling-gateways"
+    state: present
+    region: us-east-1
+    disable_rollback: false
+    template_url: https://s3.amazonaws.com/CloudFormationTemplate/autoscale.json
+  args:
+    template_parameters:
+	  VPC: Insert SBUX
+	  Subnets: Insert subnet (need 2 External then Internal) 
+	  ControlGatewayOverPrivateOrPublicAddress: public or private
+	  ManagementServer: Name of Management as defined in $FWDIR/conf/autoprovision.json (e.g., my-management)
+	  ConfigruationTemplate: Template name as defined in $FWDIR/conf/autoprovision.json (e.g., my-template)
+	  MinSize: 2
+      MaxSize: 10
+      AdminEmail: email address for scaling notices
+      Name: Gateway name 
+      InstanceType: c3.large (min)
+      SecurityGroups: Insert SBUX
+      KeyName: Insert SBUX
+      SICKey: make up your own (must match in $FWDIR/conf/autoprovision.json)
+      License: BYOL
+      Shell: /bin/bash
+      PasswordHash: set openssl -1 passwrod hash 
+      EnableCloudWatch: (yes/no)
+      
+    tags:
+      Stack: ansible-cloudformation-gateways

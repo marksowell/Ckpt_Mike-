@@ -1,0 +1,10 @@
+---
+- name: "login"
+  check_point_mgmt:
+    command: login
+    parameters:
+      username: "{{mgmt_user}}"
+      password: "{{mgmt_password}}"
+      management: "{{mgmt_server}}"
+    fingerprint: "A6:51:9D:39:CF:9E:66:F4:17:25:C0:35:74:15:CE:5D:F4:DA:E8:CE"
+  register: login_response

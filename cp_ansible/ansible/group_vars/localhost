@@ -1,0 +1,6 @@
+---
+mgmt_server: 192.168.10.15
+mgmt_user: admin
+mgmt_password: vpn123
+ansible_ssh_pass: vpn123
+ansible_user: bret
