@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "virtualMachineName": {
+            "value": "CP-Jumpbox"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS11_v2"
+        },
+        "adminUsername": {
+            "value": "mlopez"
+        },
+        "storageAccountName": {
+            "value": "smsnypddisks246"
+        },
+        "virtualNetworkName": {
+            "value": "SMS-NYPD-vnet"
+        },
+        "networkInterfaceName": {
+            "value": "cp-jumpbox382"
+        },
+        "networkSecurityGroupName": {
+            "value": "CP-Jumpbox-nsg"
+        },
+        "adminPassword": {
+            "value": null
+        },
+        "diagnosticsStorageAccountName": {
+            "value": "smsnypddiag902"
+        },
+        "diagnosticsStorageAccountId": {
+            "value": "/subscriptions/c8b96fc9-6157-40be-ad29-44e09767b22e/resourceGroups/sms-nypd/providers/Microsoft.Storage/storageAccounts/smsnypddiag902"
+        },
+        "subnetName": {
+            "value": "sharedservices"
+        },
+        "publicIpAddressName": {
+            "value": "CP-Jumpbox-ip"
+        },
+        "publicIpAddressType": {
+            "value": "Dynamic"
+        }
+    }
+}
