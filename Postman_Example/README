@@ -1,0 +1,24 @@
+README
+=======================================================
+
+The following keys must be set in the environment:
+
+server - https://<x.x.x.x>/web_api/
+session - empty
+user - <user>
+password - <password>
+targets - <management server hostname>
+policy - <policy name>
+
+=======================================================
+
+Example:
+
+This example will add groups, hosts with group membership, and access rules to allow a group of hosts to communicate with a group of servers.
+
+Use Collection Runner to run each folder in order with the following csv files and interations set to the number of records in the csv file being used:
+
+1 - Add Groups - Groups.csv
+2 - Add Hosts - Hosts.csv
+3 - Add Access Rules - Access_Rules.csv
+4 - Install Policy - No csv used

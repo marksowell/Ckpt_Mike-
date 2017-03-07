@@ -1,0 +1,9 @@
+name,ip-address,groups
+Host1,10.0.0.11,Hosts
+Host2,10.0.0.12,Hosts
+Host3,10.0.0.13,Hosts
+Host4,10.0.0.14,Hosts
+Server1,10.0.1.11,Servers
+Server2,10.0.1.12,Servers
+Server3,10.0.1.13,Servers
+Server4,10.0.1.14,Servers

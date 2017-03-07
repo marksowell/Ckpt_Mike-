@@ -1,0 +1,438 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Example",
+		"_postman_id": "65da4a53-2bc4-2221-eeb2-a39a5a9aa442",
+		"description": "README\n=======================================================\n\nThe following keys must be set in the environment:\n\nserver - https://<x.x.x.x>/web_api/\nsession - empty\nuser - <user>\npassword - <password>\ntargets - <management server hostname>\npolicy - <policy name>\n\n=======================================================\n\nExample:\n\nThis example will add groups, hosts with group membership, and access rules to allow a group of hosts to communicate with a group of servers.\n\nUse Collection Runner to run each folder in order with the following csv files:\n\n1 - Add Groups - Groups.csv\n2 - Add Hosts - Hosts.csv\n3 - Add Access Rules - Access_Rules.csv\n4 - Install Policy - No csv used",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1 - Add Groups",
+			"description": "",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"session\", jsonData.sid);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{server}}/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\" : \"{{user}}\",\n  \"password\" : \"{{password}}\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add Groups",
+					"request": {
+						"url": "{{server}}/add-group",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\" : \"{{groups}}\"\r\n}"
+						},
+						"description": "Create a group with multiple members"
+					},
+					"response": []
+				},
+				{
+					"name": "Publish",
+					"request": {
+						"url": "{{server}}/publish",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "{{server}}/logout",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"description": "Log out from the existing session"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2 - Add Hosts",
+			"description": "",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"session\", jsonData.sid);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{server}}/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\" : \"{{user}}\",\n  \"password\" : \"{{password}}\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add Hosts",
+					"request": {
+						"url": "{{server}}/add-host",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\" : \"{{name}}\",\n  \"ip-address\" : \"{{ip-address}}\",\n  \"groups\" : \"{{groups}}\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Publish",
+					"request": {
+						"url": "{{server}}/publish",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "{{server}}/logout",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"description": "Log out from the existing session"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3 - Add Access Rules",
+			"description": "",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"session\", jsonData.sid);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{server}}/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\" : \"{{user}}\",\n  \"password\" : \"{{password}}\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add Access Rules",
+					"request": {
+						"url": "{{server}}/add-access-rule",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"layer\" : \"Network\",\r\n  \"position\" : 1,\r\n  \"name\" : \"{{name}}\",\r\n  \"source\" : \"{{src}}\",\r\n  \"destination\" : \"{{dst}}\",\r\n  \"service\" : [ \"ANY\" ],\r\n  \"action\" : \"accept\",\r\n  \"track-settings\": {\r\n        \"type\": \"Log\",\r\n        \"per-session\": false,\r\n        \"per-connection\": false,\r\n        \"accounting\": false,\r\n        \"alert\": \"none\"\r\n}\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Publish",
+					"request": {
+						"url": "{{server}}/publish",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "{{server}}/logout",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"description": "Log out from the existing session"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4 - Install Policy",
+			"description": "",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"session\", jsonData.sid);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{server}}/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\" : \"{{user}}\",\n  \"password\" : \"{{password}}\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Install policy",
+					"request": {
+						"url": "{{server}}/install-policy",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"policy-package\" : \"{{policy}}\",\r\n  \"access\" : true,\r\n  \"threat-prevention\" : true,\r\n  \"targets\" : [ \"{{targets}}\" ]\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "{{server}}/logout",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-chkp-sid",
+								"value": "{{session}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"description": "Log out from the existing session"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
